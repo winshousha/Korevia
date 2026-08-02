@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Navbar from '../components/Navbar.jsx'
-import Mascot from '../components/Mascot.jsx'
+import IntroScene from '../components/IntroScene.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 import { LANGUAGES } from '../data/languages.js'
 
@@ -64,28 +64,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-lacquer-500/10 via-gold-300/10 to-indigo-500/10"
-          >
-            <Mascot expression="excited" accessory="headband" accentHex="#E8483C" size={220} />
-            <motion.div
-              className="absolute -left-4 top-10 rounded-xl2 bg-paper dark:bg-ink-card px-4 py-2 shadow-card font-mono text-sm"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              +15 XP 🎉
-            </motion.div>
-            <motion.div
-              className="absolute -right-2 bottom-16 rounded-xl2 bg-paper dark:bg-ink-card px-4 py-2 shadow-card font-mono text-sm"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-            >
-              🔥 6 jours
-            </motion.div>
-          </motion.div>
+          <IntroScene />
         </div>
       </section>
 

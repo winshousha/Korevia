@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react'
 import { useNavigate, useParams, Navigate, Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Mascot from '../components/Mascot.jsx'
+import Buddy from '../components/Buddy.jsx'
 import Confetti from '../components/Confetti.jsx'
 import ExerciseCard from '../components/ExerciseCard.jsx'
 import { getLanguage } from '../data/languages.js'
 import { EXERCISE_BANK, UNITS } from '../data/lessons.js'
 import { useProgress } from '../context/ProgressContext.jsx'
+import { speak } from '../utils/speech.js'
 
 const ACCENT_HEX = { lacquer: '#E8483C', gold: '#F2B705', indigo: '#4E5BC6' }
 const QUESTIONS_PER_LESSON = 4
@@ -29,6 +31,7 @@ export default function Lesson() {
   const [feedback, setFeedback] = useState(null) // 'correct' | 'wrong' | null
   const [correctCount, setCorrectCount] = useState(0)
   const [finished, setFinished] = useState(false)
+  const [fuTalking, setFuTalking] = useState(false)
 
   if (!lang || !lessonMeta) return <Navigate to="/langues" replace />
 
@@ -49,6 +52,13 @@ export default function Lesson() {
     }
   }
 
+  const handleListenPrompt = () => {
+    speak(current?.prompt || '', 'fr-FR', {
+      onStart: () => setFuTalking(true),
+      onEnd: () => setFuTalking(false),
+    })
+  }
+
   const accentHex = ACCENT_HEX[lang.accent]
 
   if (finished) {
@@ -61,7 +71,10 @@ export default function Lesson() {
           className="relative w-full max-w-md rounded-xl2 bg-white dark:bg-ink-card p-8 text-center shadow-card"
         >
           {perfect && <Confetti count={26} />}
-          <Mascot expression="excited" accessory={lang.accessory} accentHex={accentHex} size={140} className="mx-auto" />
+          <div className="flex items-center justify-center gap-2">
+            <Mascot expression="excited" accessory={lang.accessory} accentHex={accentHex} size={140} />
+            <Buddy talking={false} size={56} />
+          </div>
           <h1 className="mt-4 font-display text-3xl font-semibold">
             {perfect ? 'Sans faute !' : 'Leçon terminée !'}
           </h1>
@@ -111,7 +124,17 @@ export default function Lesson() {
         </span>
       </div>
 
-      <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pb-16 pt-10">
+      <div className="mx-auto flex max-w-2xl items-center justify-end gap-2 px-5 pt-3">
+        <button
+          onClick={handleListenPrompt}
+          className="flex items-center gap-2 rounded-full border border-ink/10 dark:border-paper/15 px-3 py-1.5 text-xs font-semibold text-ink/60 dark:text-paper/60 hover:border-indigo-300"
+        >
+          <Buddy talking={fuTalking} size={28} />
+          Réécouter la consigne
+        </button>
+      </div>
+
+      <div className="mx-auto flex max-w-2xl flex-col items-center px-5 pb-16 pt-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={index}
@@ -121,7 +144,7 @@ export default function Lesson() {
             transition={{ duration: 0.3 }}
             className="w-full"
           >
-            <ExerciseCard exercise={current} onAnswered={handleAnswered} />
+            <ExerciseCard exercise={current} speechLang={lang.speechLang} onAnswered={handleAnswered} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -152,9 +175,13 @@ export default function Lesson() {
                 />
                 <div>
                   <p className={`font-display text-lg font-semibold ${feedback === 'correct' ? 'text-jade-600' : 'text-lacquer-600'}`}>
-                    {feedback === 'correct' ? 'Parfait !' : 'Pas tout à fait…'}
+                    {feedback === 'correct'
+                      ? 'Parfait !'
+                      : current.type === 'speak'
+                      ? 'Continue à t\u2019entraîner !'
+                      : 'Pas tout à fait…'}
                   </p>
-                  {feedback === 'wrong' && (
+                  {feedback === 'wrong' && current.type !== 'speak' && (
                     <p className="text-sm text-ink/70 dark:text-paper/70">
                       Bonne réponse : <strong>{Array.isArray(current.answer) ? current.answer.join(' ') : current.answer}</strong>
                     </p>

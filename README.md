@@ -1,8 +1,8 @@
 # Moji — plateforme d'apprentissage du japonais, chinois et coréen
 
 Projet React (Vite) prêt à déployer sur Netlify. Application de démonstration
-premium, gamifiée, avec mascotte animée, système de leçons, XP/streak/badges
-et mode sombre.
+premium, gamifiée, avec deux personnages animés, synthèse et reconnaissance
+vocales, système de leçons, XP/streak/badges et mode sombre.
 
 ## Stack technique
 
@@ -10,15 +10,21 @@ et mode sombre.
 - **Vite** — build rapide, config minimale, idéal pour Netlify
 - **Tailwind CSS** — design system cohérent via tokens (couleurs, polices, radius)
 - **Framer Motion** — transitions de page, feedback de réussite/erreur, micro-interactions
+- **Web Speech API** — `SpeechSynthesis` (les personnages "parlent", prononciation des mots) et `SpeechRecognition` (répétition à l'oral, en démo)
 - **React Router** — navigation entre accueil, sélection de langue, parcours, leçon, tableau de bord
 - **Contexte React + `localStorage`** — persistance de la progression sans back-end (facile à remplacer par une vraie API plus tard)
 
 Pourquoi ce choix plutôt qu'un framework plus lourd (Next.js) ? Le site n'a
 pas besoin de rendu serveur ni de SEO poussé par page pour cette V1 démo :
 Vite donne un déploiement Netlify statique, rapide, avec une config quasi nulle.
-Si vous ajoutez plus tard des pages publiques à indexer (blog, pages langue
-par langue en SSR), migrer vers Next.js sera facile car les composants sont
-déjà découpés proprement.
+Pourquoi la Web Speech API plutôt qu'un service tiers (ElevenLabs, Google
+Cloud Speech) ? Elle est native au navigateur, gratuite, sans clé API ni
+back-end — parfaite pour une démo. Pour une V2 en production, la synthèse
+vocale gagnerait à être remplacée par des voix pré-enregistrées ou un
+service cloud (meilleure qualité et cohérence entre navigateurs), et la
+reconnaissance par un service serveur dédié à l'évaluation de prononciation
+(la Web Speech API ne juge pas la qualité de prononciation, seulement le
+texte reconnu).
 
 ## Arborescence
 
@@ -38,22 +44,28 @@ moji/
     │   ├── ThemeContext.jsx     # Dark mode
     │   └── ProgressContext.jsx  # XP, streak, badges, leçons complétées
     ├── data/
-    │   ├── languages.js         # Japonais / Chinois / Coréen (métadonnées)
+    │   ├── languages.js         # Japonais / Chinois / Coréen (métadonnées + code vocal)
     │   └── lessons.js           # Unités, leçons et banque d'exercices démo
+    ├── utils/
+    │   └── speech.js            # Web Speech API : synthèse + reconnaissance
     ├── components/
-    │   ├── Mascot.jsx           # Mascotte SVG (expressions + accessoires)
+    │   ├── Mascot.jsx           # Moji : expressions (idle/success/error/progress/loading/surprised)
+    │   ├── Buddy.jsx            # Fu : second personnage, guide vocal
+    │   ├── IntroScene.jsx       # Scène d'accueil animée avec les 2 personnages + voix
+    │   ├── SpeakButton.jsx      # Bouton "écouter la prononciation"
+    │   ├── VoiceWave.jsx        # Onde animée pendant la reconnaissance vocale
     │   ├── Navbar.jsx
     │   ├── ThemeToggle.jsx
     │   ├── StreakFlame.jsx
     │   ├── BadgeCard.jsx
     │   ├── Confetti.jsx
-    │   └── ExerciseCard.jsx     # QCM + reconstitution de phrase
+    │   └── ExerciseCard.jsx     # QCM, reconstitution de phrase, répétition orale
     └── pages/
         ├── Home.jsx
         ├── LanguageSelect.jsx
         ├── LessonPath.jsx
-        ├── Lesson.jsx           # Enchaînement d'exercices + feedback animé
-        ├── Dashboard.jsx
+        ├── Lesson.jsx           # Enchaînement d'exercices + feedback animé + Fu narrateur
+        ├── Dashboard.jsx        # Stats, streak, badges, défi du jour, classement démo
         └── NotFound.jsx
 ```
 
@@ -111,10 +123,18 @@ correctement en rechargement direct.
 - **Typographie** : `Fraunces` (display, avec du caractère) pour les titres,
   `Manrope` pour le corps de texte, `Space Mono` pour les chiffres (XP,
   streak) — renforce la sensation de "score" façon jeu.
-- **Signature du produit** : la mascotte **Moji**, dont l'accessoire change
-  selon la langue choisie (bandeau pour le japonais, lanterne pour le
-  chinois, ruban pour le coréen) tout en gardant un seul personnage cohérent
-  — plutôt qu'un mascotte générique ou trois personnages différents.
+- **Deux personnages** : **Moji**, la mascotte principale qui réagit aux
+  réponses (états idle/success/error/progress/loading/surprised), et **Fu**,
+  un petit esprit-lanterne compagnon qui incarne la voix du produit — c'est
+  lui qui prononce les instructions et accueille l'utilisateur dans la scène
+  d'introduction.
+- **Voix** : la synthèse vocale (`SpeechSynthesis`) est utilisée pour
+  l'accueil, les consignes et la prononciation des mots/phrases. La
+  reconnaissance vocale (`SpeechRecognition`) alimente l'exercice de
+  répétition orale, avec un retour visuel (onde animée) pendant l'écoute.
+  ⚠️ `SpeechRecognition` n'est pas supportée par Firefox et l'est
+  partiellement par Safari : l'interface le détecte et propose alors de
+  simplement écouter le modèle puis continuer.
 
 ## Pour aller plus loin
 
@@ -122,12 +142,18 @@ correctement en rechargement direct.
   appels à une API (Supabase, Firebase ou back-end custom) pour synchroniser
   XP/streak/badges entre appareils, avec authentification (email, Google...).
 - **Vrai contenu pédagogique** : structurer `lessons.js` par curriculum
-  réel (CECRL adapté aux langues asiatiques), avec audio pour les exercices
-  d'écoute (actuellement absents de la démo) et reconnaissance vocale pour
-  la prononciation.
+  réel (CECRL adapté aux langues asiatiques), avec de vrais fichiers audio
+  enregistrés par des locuteurs natifs plutôt que la synthèse du navigateur
+  pour une meilleure qualité de prononciation.
+- **Évaluation de prononciation réelle** : la Web Speech API ne note pas la
+  qualité de prononciation, seulement le texte reconnu. Une vraie évaluation
+  demanderait un service dédié (ex. Azure Pronunciation Assessment).
 - **Paiement / offre premium** : ajouter Stripe pour un palier "Moji+"
   (leçons illimitées, cœurs infinis, contenus avancés).
 - **Notifications** : rappels quotidiens (email ou push) pour maintenir le
   streak, avec un service comme OneSignal.
+- **Classement réel** : le classement du tableau de bord est une donnée de
+  démonstration statique ; un vrai classement nécessite un back-end partagé
+  entre utilisateurs.
 - **Accessibilité** : le focus visible et `prefers-reduced-motion` sont déjà
   gérés ; ajouter des tests avec lecteur d'écran sur le flux d'exercices.

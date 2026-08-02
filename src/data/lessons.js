@@ -72,26 +72,31 @@ export const UNITS = {
 }
 
 // Banque d'exercices de démo, réutilisée pour n'importe quelle leçon (mode démo).
+// `audioText` : ce que la synthèse vocale prononce (bouton "écouter").
+// Le type `speak` déclenche la reconnaissance vocale (répétition à l'oral).
 export const EXERCISE_BANK = {
   ja: [
-    { type: 'mcq', prompt: 'Comment dit-on « merci » en japonais ?', options: ['ありがとう', 'さようなら', 'すみません', 'おはよう'], answer: 'ありがとう' },
-    { type: 'mcq', prompt: 'Que signifie « おはよう » ?', options: ['Bonsoir', 'Bonjour (matin)', 'Merci', 'Excusez-moi'], answer: 'Bonjour (matin)' },
-    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['です', 'レア', 'は', '私'], answer: ['私', 'は', 'レア', 'です'] },
-    { type: 'mcq', prompt: 'Quel hiragana se lit « ka » ?', options: ['あ', 'か', 'さ', 'た'], answer: 'か' },
-    { type: 'mcq', prompt: 'Comment compte-t-on « trois » ?', options: ['いち', 'に', 'さん', 'よん'], answer: 'さん' },
+    { type: 'mcq', prompt: 'Comment dit-on « merci » en japonais ?', options: ['ありがとう', 'さようなら', 'すみません', 'おはよう'], answer: 'ありがとう', audioText: 'ありがとう' },
+    { type: 'mcq', prompt: 'Que signifie « おはよう » ?', options: ['Bonsoir', 'Bonjour (matin)', 'Merci', 'Excusez-moi'], answer: 'Bonjour (matin)', audioText: 'おはよう' },
+    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['です', 'レア', 'は', '私'], answer: ['私', 'は', 'レア', 'です'], audioText: '私はレアです' },
+    { type: 'mcq', prompt: 'Quel hiragana se lit « ka » ?', options: ['あ', 'か', 'さ', 'た'], answer: 'か', audioText: 'か' },
+    { type: 'mcq', prompt: 'Comment compte-t-on « trois » ?', options: ['いち', 'に', 'さん', 'よん'], answer: 'さん', audioText: 'さん' },
+    { type: 'speak', prompt: 'Répète à voix haute :', displayText: 'こんにちは', hint: 'Bonjour', audioText: 'こんにちは' },
   ],
   zh: [
-    { type: 'mcq', prompt: 'Comment dit-on « merci » en chinois ?', options: ['谢谢', '你好', '再见', '对不起'], answer: '谢谢' },
-    { type: 'mcq', prompt: 'Quel ton porte « mā » (maman) ?', options: ['1er ton', '2e ton', '3e ton', '4e ton'], answer: '1er ton' },
-    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['叫', '我', '莱亚'], answer: ['我', '叫', '莱亚'] },
-    { type: 'mcq', prompt: 'Que signifie « 你好 » ?', options: ['Au revoir', 'Bonjour', 'Merci', 'Pardon'], answer: 'Bonjour' },
-    { type: 'mcq', prompt: 'Comment dit-on « trois » ?', options: ['一', '二', '三', '四'], answer: '三' },
+    { type: 'mcq', prompt: 'Comment dit-on « merci » en chinois ?', options: ['谢谢', '你好', '再见', '对不起'], answer: '谢谢', audioText: '谢谢' },
+    { type: 'mcq', prompt: 'Quel ton porte « mā » (maman) ?', options: ['1er ton', '2e ton', '3e ton', '4e ton'], answer: '1er ton', audioText: '妈' },
+    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['叫', '我', '莱亚'], answer: ['我', '叫', '莱亚'], audioText: '我叫莱亚' },
+    { type: 'mcq', prompt: 'Que signifie « 你好 » ?', options: ['Au revoir', 'Bonjour', 'Merci', 'Pardon'], answer: 'Bonjour', audioText: '你好' },
+    { type: 'mcq', prompt: 'Comment dit-on « trois » ?', options: ['一', '二', '三', '四'], answer: '三', audioText: '三' },
+    { type: 'speak', prompt: 'Répète à voix haute :', displayText: '你好', hint: 'Bonjour', audioText: '你好' },
   ],
   ko: [
-    { type: 'mcq', prompt: 'Comment dit-on « merci » en coréen ?', options: ['감사합니다', '안녕하세요', '미안해요', '안녕히 가세요'], answer: '감사합니다' },
-    { type: 'mcq', prompt: 'Quelle voyelle du hangeul se lit « a » ?', options: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ'], answer: 'ㅏ' },
-    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['이에요', '레아', '저는'], answer: ['저는', '레아', '이에요'] },
-    { type: 'mcq', prompt: 'Que signifie « 안녕하세요 » ?', options: ['Merci', 'Bonjour', 'Pardon', 'Bonne nuit'], answer: 'Bonjour' },
-    { type: 'mcq', prompt: 'Comment dit-on « trois » ?', options: ['하나', '둘', '셋', '넷'], answer: '셋' },
+    { type: 'mcq', prompt: 'Comment dit-on « merci » en coréen ?', options: ['감사합니다', '안녕하세요', '미안해요', '안녕히 가세요'], answer: '감사합니다', audioText: '감사합니다' },
+    { type: 'mcq', prompt: 'Quelle voyelle du hangeul se lit « a » ?', options: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ'], answer: 'ㅏ', audioText: '아' },
+    { type: 'build', prompt: 'Reconstitue la phrase : « Je m\u2019appelle Léa »', tokens: ['이에요', '레아', '저는'], answer: ['저는', '레아', '이에요'], audioText: '저는 레아 이에요' },
+    { type: 'mcq', prompt: 'Que signifie « 안녕하세요 » ?', options: ['Merci', 'Bonjour', 'Pardon', 'Bonne nuit'], answer: 'Bonjour', audioText: '안녕하세요' },
+    { type: 'mcq', prompt: 'Comment dit-on « trois » ?', options: ['하나', '둘', '셋', '넷'], answer: '셋', audioText: '셋' },
+    { type: 'speak', prompt: 'Répète à voix haute :', displayText: '안녕하세요', hint: 'Bonjour', audioText: '안녕하세요' },
   ],
 }

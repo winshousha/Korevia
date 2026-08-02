@@ -87,6 +87,50 @@ export default function Dashboard() {
             <BadgeCard key={badge.id} badge={badge} unlocked={badges.includes(badge.id)} />
           ))}
         </div>
+
+        {/* Défi du jour + classement (démo) */}
+        <div className="mt-14 grid gap-5 sm:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-xl2 border border-lacquer-500/20 bg-lacquer-500/5 p-6"
+          >
+            <p className="text-sm font-semibold text-lacquer-600 dark:text-lacquer-300">Défi du jour</p>
+            <p className="mt-2 font-display text-lg font-semibold">Termine 2 leçons avant minuit</p>
+            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-ink/5 dark:bg-paper/10">
+              <div className="h-full w-1/2 rounded-full bg-lacquer-500" />
+            </div>
+            <p className="mt-2 text-xs text-ink/40 dark:text-paper/40">1/2 leçon · récompense : +20 XP bonus</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="rounded-xl2 border border-ink/5 dark:border-paper/10 p-6"
+          >
+            <p className="text-sm font-semibold text-ink/60 dark:text-paper/60">Classement de la semaine (démo)</p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {[
+                { name: 'Aïcha', xp: 410 },
+                { name: 'Toi', xp, self: true },
+                { name: 'Marc', xp: 190 },
+              ]
+                .sort((a, b) => b.xp - a.xp)
+                .map((row, i) => (
+                  <li
+                    key={row.name}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2 ${
+                      row.self ? 'bg-lacquer-500/10 font-semibold' : ''
+                    }`}
+                  >
+                    <span>#{i + 1} {row.name}</span>
+                    <span className="font-mono">{row.xp} XP</span>
+                  </li>
+                ))}
+            </ul>
+          </motion.div>
+        </div>
       </section>
     </div>
   )

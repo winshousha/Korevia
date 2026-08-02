@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
 
 /**
- * Moji — la mascotte du produit.
- * `expression` : 'happy' | 'excited' | 'encourage' | 'focused'
+ * Moji — la mascotte principale du produit.
+ * `expression` : 'happy' (idle) | 'excited' (success/celebration) | 'encourage' (error)
+ *              | 'focused' (progress) | 'loading' (en cours d'action) | 'surprised'
  * `accessory`  : 'headband' | 'lantern' | 'ribbon' | null
  * `accentHex`  : couleur d'accent (bandeau / lanterne / ruban)
  */
@@ -19,10 +20,14 @@ export default function Mascot({
     excited: 'M 58 96 Q 80 128 102 96 Q 80 112 58 96 Z',
     encourage: 'M 64 104 Q 80 98 96 104',
     focused: 'M 68 102 L 92 102',
+    loading: 'M 70 102 Q 80 106 90 102',
+    surprised: 'M 80 96 m -7 0 a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0',
   }
 
   const eyesClosed = expression === 'excited'
+  const eyesWide = expression === 'surprised'
   const browRaised = expression === 'encourage'
+  const isLoading = expression === 'loading'
 
   return (
     <motion.div
@@ -56,15 +61,33 @@ export default function Mascot({
           </>
         ) : (
           <>
-            <g className="animate-blink" style={{ transformOrigin: '60px 82px' }}>
-              <circle cx="60" cy="82" r="7" fill="#14141F" />
+            <g className={eyesWide ? '' : 'animate-blink'} style={{ transformOrigin: '60px 82px' }}>
+              <circle cx="60" cy="82" r={eyesWide ? 9 : 7} fill="#14141F" />
               <circle cx="62.5" cy="79.5" r="2" fill="white" />
             </g>
-            <g className="animate-blink" style={{ transformOrigin: '100px 82px' }}>
-              <circle cx="100" cy="82" r="7" fill="#14141F" />
+            <g className={eyesWide ? '' : 'animate-blink'} style={{ transformOrigin: '100px 82px' }}>
+              <circle cx="100" cy="82" r={eyesWide ? 9 : 7} fill="#14141F" />
               <circle cx="102.5" cy="79.5" r="2" fill="white" />
             </g>
           </>
+        )}
+
+        {/* Petits points de réflexion pendant l'état "loading" */}
+        {isLoading && (
+          <g>
+            {[0, 1, 2].map((i) => (
+              <motion.circle
+                key={i}
+                cx={68 + i * 12}
+                cy={120}
+                r="2.5"
+                fill="#14141F"
+                opacity="0.5"
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </g>
         )}
 
         {/* Sourcils (encourage) */}
